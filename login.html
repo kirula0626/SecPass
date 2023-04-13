@@ -1,45 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login Page</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 
 <body>
-    <div class="container my-5">
+    <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-lg-4 col-md-6 col-sm-8">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Secure Cloud Storage Login</h4>
-                        <form action="" method="post">
+                        <h4 class="card-title text-center mb-4">Login</h4>
+                        <form id="loginForm">
                             <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="username" name="username" required>
-                                </div>
+                                <label for="usernameInput" class="form-label">Username or Email</label>
+                                <input type="text" class="form-control" id="usernameInput" name="username" required />
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
+                                <label for="passwordInput" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="passwordInput" name="password" required />
+                                <div class="invalid-feedback">Password must be at least 8 characters long</div>
                             </div>
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="remember">
-                                <label class="form-check-label" for="remember">Remember me</label>
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="rememberMeInput" name="rememberMe" />
+                                <label class="form-check-label" for="rememberMeInput">Remember me</label>
                             </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Login</button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="#">Forgot password?</a>
                             </div>
                         </form>
                     </div>
@@ -47,10 +42,8 @@
             </div>
         </div>
     </div>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    <!-- Font Awesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+    <script src="js/login.js"></script>
 </body>
 
 </html>
