@@ -3,26 +3,24 @@ function isValidEmail(email) {
     return regex.test(email);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("forget-password-form");
-    const emailInput = document.getElementById("email");
+console.log(!isValidEmail(document.getElementById("email").value));
 
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        const email = emailInput.value;
-        if (!isValidEmail(email)) {
-            emailInput.classList.remove("is-valid");
-            emailInput.classList.add("is-invalid");
-        } else {
-            // Process forget password logic here
-            alert("Password reset link sent to email.");
-            form.submit();
-        }
-    });
+// Submit form on button click
+$('#forget_password_form').submit(function(event) {
+    event.preventDefault();
+    const email_reset = document.getElementById("email").value;
+    if (!isValidEmail(email_reset)) {
 
-    emailInput.addEventListener("input", function() {
-        if (emailInput.classList.contains("is-invalid")) {
-            emailInput.classList.remove("is-invalid");
-        }
-    });
+        $('#email').removeClass('is-valid').addClass('is-invalid');
+    } else {
+        // Convert email to hash
+        const hashEmailR = CryptoJS.SHA1(email).toString();
+
+        // Modify URL with hash
+        const newUrl = window.location.href.split('?')[0] + '?email=' + hashEmailR;
+        window.history.pushState(null, null, newUrl);
+
+        // Process forget password logic here
+        // alert('Password reset link sent to email.');
+    }
 });
