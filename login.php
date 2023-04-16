@@ -1,3 +1,68 @@
+<?php
+    require('comm_php/sec_head.php');
+    require('comm_php/db_con.php');
+
+    // Start session
+    session_start();
+    
+    
+
+    // Check if form is submitted
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+            // Get username/email and password from form
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            echo "<script>alert('$password')</script>";
+
+            // Check if username or email exists in database
+            $stmt = $conn -> prepare("SELECT PPassword,PID FROM persons WHERE PUsername = ? OR PEmail = ?");
+            $stmt -> bind_param("ss", $username, $username);
+            $stmt -> execute();
+            $result = $stmt -> get_result();
+
+            if($result -> num_rows == 1 ){
+                // Get password from database
+                $row = $result -> fetch_assoc();
+                $db_password = $row['PPassword'];
+                $db_id = $row['PID'];
+                echo "<script>alert('$db_password')</script>";
+
+                // Check if password is correct
+                if(!password_verify($password, $db_password)){
+                    $_SESSION['user_id'] = $db_id;
+                    $_SESSION['username'] = $username;
+                    // Password is correct
+                    // Check if remember me is checked
+                    if(isset($_POST['rememberMe'])){
+                        // Remember me is checked
+                        // Set cookie for 1 year
+                        setcookie('username', $username, time() + (86400 * 365), "/", "", true, true); // HttpOnly attribute added
+                        setcookie('password', $password, time() + (86400 * 365), "/", "", true, true); // HttpOnly attribute added
+                    } else {
+                        // Remember me is not checked
+                        // Set cookie for 1 hour
+                        setcookie('username', $username, time() + 3600, "/", "", true, true); // HttpOnly attribute added
+                        setcookie('password', $password, time() + 3600, "/", "", true, true); // HttpOnly attribute added
+                    }
+
+                    // Redirect to home page
+                    header("Location: dashboard.php");
+                } else {
+                    // Password is incorrect
+                 $error = "<div class='alert alert-danger'>Incorrect  password</div>";
+                }
+            } else {
+                // Username or email does not exist
+                $error = "<div class='alert alert-danger'>Incorrect username or password</div>";
+            }
+
+        }
+        
+    
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -19,7 +84,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title text-center mb-4">Login</h4>
-                        <form id="loginForm">
+                        <form id="loginForm" method="POST" action="login.php">
                             <div class="mb-3">
                                 <label for="usernameInput" class="form-label">Username or Email</label>
                                 <input type="text" class="form-control" id="usernameInput" name="username" required />
@@ -35,6 +100,7 @@
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Submit</button>
+                                <?php if(isset($error)) echo $error; ?>
                             </div>
                             <div class="text-center mt-3">
                                 <a href="forgetpass.html" target="_self">Forgot password?</a>

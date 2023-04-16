@@ -1,3 +1,27 @@
+<?php
+require('comm_php/db_con.php');
+require('comm_php/sec_head.php');
+
+// Start session
+session_start();
+
+// Check if user is not logged in
+if(!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
+// Generate session token
+
+echo $_SESSION['token'] ;
+
+// Disable caching of this page
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,16 +40,23 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <<div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Files</a>
+                        <a class="nav-link" href="#">My Files</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
+                        <a class="nav-link" href="#">Shared Files</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <form action="comm_php/logout.php" method="POST">
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
                     </li>
                 </ul>
             </div>
