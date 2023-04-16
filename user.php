@@ -31,7 +31,7 @@
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <botton type="submit" class="btn btn-danger"> Logout </botton>
+                        <botton type="submit" class="btn btn-danger" onclick="document.location='welcome.html'"> Logout </botton>
                     </li>
                 </ul>
             </div>

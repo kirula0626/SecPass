@@ -36,5 +36,5 @@ loginForm.addEventListener("submit", (event) => {
 });
 
 const password = document.getElementById("passwordInput").value;
-const hashedPassword = CryptoJS.AES.encrypt("password", "kiru");
+const hashedPassword = CryptoJS.AES.encrypt("password", "kiru").toString();
 console.log(hashedPassword); // Password is hashed.
