@@ -36,10 +36,5 @@ loginForm.addEventListener("submit", (event) => {
 });
 
 const password = document.getElementById("passwordInput").value;
-const hashedPassword = CryptoJS.MD5(password).toString();
+const hashedPassword = CryptoJS.AES.encrypt("password", "kiru");
 console.log(hashedPassword); // Password is hashed.
-
-function onSignIn(googleUser) {
-    var id_token = googleUser.getAuthResponse().id_token;
-    // Send the id_token to your backend server for verification
-}
