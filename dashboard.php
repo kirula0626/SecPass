@@ -13,7 +13,7 @@ if(!isset($_SESSION['user_id'])) {
 
 // Generate session token
 
-echo $_SESSION['token'] ;
+//echo $_SESSION['token'] ;
 
 // Disable caching of this page
 header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -21,56 +21,84 @@ header('Pragma: no-cache');
 header('Expires: 0');
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cloud Storage Portal</title>
-    <!-- Bootstrap core CSS h-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard - My Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Cloud Storage Portal Dashboard</a>
+            <a class="navbar-brand" href="dashboard.php">Dashboard</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-            <<div class="collapse navbar-collapse" id="navbarNav">
+            
+        <span class="navbar-toggler-icon"></span>
+      </button> 
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="#">Master Key</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">My Files</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Shared Files</a>
-                    </li>
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <form action="comm_php/logout.php" method="POST">
-                            <button type="submit" class="btn btn-danger">Logout</button>
-                        </form>
-                    </li>
-                </ul>
+
             </div>
+            <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">User</a>
+                    </li>
+                    <li class="nav-item">
+                        <botton type="submit" class="btn btn-danger" onclick="document.location='welcome.html'"> Logout </botton>
+                    </li>
+                </ul>
         </div>
+        
     </nav>
 
-    <div class="container">
-        <h1>Welcome to Cloud Storage Portal</h1>
-        <p>Here you can store and access your files securely.</p>
-        <button class="btn btn-primary">Get Started</button>
+    <!-- Main Content -->
+    <div class="container my-5">
+      <h1>Dashboard</h1>
+      <p>Welcome to your dashboard. Here, you can view your account information, analytics, and more.</p>
+      <div class="row my-5">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Analytics</h5>
+              <p class="card-text">View your website's analytics, including page views, unique visitors, and more.</p>
+              <a href="#" class="btn btn-primary">View Analytics</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Account Information</h5>
+              <p class="card-text">View and edit your account information, including your name, email, and password.</p>
+              <a href="#" class="btn btn-primary">View Account Information</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    Here's an example script tag that you can use to include the jQuery library in your HTML file:
 
+php
+Copy code
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Optional JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"></script>
+
+  </body>
 </html>

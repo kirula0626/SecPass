@@ -14,52 +14,64 @@
             $username = $_POST['username'];
             $password = $_POST['password'];
 
-            echo "<script>alert('$password')</script>";
-
             // Check if username or email exists in database
-            $stmt = $conn -> prepare("SELECT PPassword,PID FROM persons WHERE PUsername = ? OR PEmail = ?");
+            $stmt = $conn -> prepare("SELECT PID FROM persons p WHERE PUsername = ? OR PEmail = ?");
             $stmt -> bind_param("ss", $username, $username);
             $stmt -> execute();
             $result = $stmt -> get_result();
+            $stmt->close();
 
             if($result -> num_rows == 1 ){
                 // Get password from database
                 $row = $result -> fetch_assoc();
-                $db_password = $row['PPassword'];
                 $db_id = $row['PID'];
-                echo "<script>alert('$db_password')</script>";
 
-                // Check if password is correct
-                if(!password_verify($password, $db_password)){
-                    $_SESSION['user_id'] = $db_id;
-                    $_SESSION['username'] = $username;
-                    // Password is correct
-                    // Check if remember me is checked
-                    if(isset($_POST['rememberMe'])){
-                        // Remember me is checked
-                        // Set cookie for 1 year
-                        setcookie('username', $username, time() + (86400 * 365), "/", "", true, true); // HttpOnly attribute added
-                        setcookie('password', $password, time() + (86400 * 365), "/", "", true, true); // HttpOnly attribute added
+                $stmt = $conn -> prepare("SELECT p.PPassword, e.Salt FROM persons p, emailsalt e WHERE p.PID = ? AND e.PID = ?");
+                $stmt -> bind_param("ss", $db_id, $db_id);
+                $stmt -> execute();
+                $result = $stmt -> get_result();
+
+                if($result -> num_rows == 1 ){
+                    $row = $result -> fetch_assoc();
+                    $db_password = $row['PPassword'];
+                    $db_salt = $row['Salt'];
+
+                    $password = hash('sha1',$db_salt.$password);
+
+                    // Check if password is correct
+                    if(!password_verify($password, $db_password)){
+                        $_SESSION['user_id'] = $db_id;
+                        $_SESSION['username'] = $username;
+                        
+                        // Password is correct
+                        // Check if remember me is checked
+                        if(isset($_POST['rememberMe'])){
+                            // Remember me is checked
+                            // Set cookie for 1 year
+                            setcookie('username', $username, time() + (86400 * 365), "/", "", true, true); // HttpOnly attribute added
+                            setcookie('password', $password, time() + (86400 * 365), "/", "", true, true); // HttpOnly attribute added
+                        } else {
+                            // Remember me is not checked
+                            // Set cookie for 1 hour
+                            setcookie('username', $username, time() + 3600, "/", "", true, true); // HttpOnly attribute added
+                            setcookie('password', $password, time() + 3600, "/", "", true, true); // HttpOnly attribute added
+                        }
+
+                        // Redirect to home page
+                        header("Location: dashboard.php");
                     } else {
-                        // Remember me is not checked
-                        // Set cookie for 1 hour
-                        setcookie('username', $username, time() + 3600, "/", "", true, true); // HttpOnly attribute added
-                        setcookie('password', $password, time() + 3600, "/", "", true, true); // HttpOnly attribute added
+                        // Password is incorrect
+                        $error = "<div class='alert alert-danger'>Incorrect  password</div>";
                     }
-
-                    // Redirect to home page
-                    header("Location: dashboard.php");
-                } else {
-                    // Password is incorrect
-                 $error = "<div class='alert alert-danger'>Incorrect  password</div>";
                 }
-            } else {
+                
+            }else {
                 // Username or email does not exist
                 $error = "<div class='alert alert-danger'>Incorrect username or password</div>";
             }
-
-        }
-        
+        $stmt ->close();
+        $conn ->close();
+    }
     
 ?>
 
