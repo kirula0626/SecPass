@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Password Manager</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Password Manager</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Icon</th>
+                    <th>Website URL</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+          // Fetch data from database and loop through it to create rows in the table
+          foreach ($data as $row) {
+            // Get the icon URL using Clearbit logo API
+            $iconUrl = "https://logo.clearbit.com/" . $row["url"];
+            echo "<tr>";
+            echo "<td><img src='$iconUrl' alt='' width='30' height='30'></td>";
+            echo "<td>{$row["url"]}</td>";
+            echo "<td>{$row["email"]}</td>";
+            echo "<td><div class='input-group'>
+                    <input type='password' class='form-control' value='{$row["password"]}' readonly>
+                    <button class='btn btn-outline-secondary' type='button' id='button-addon2' onclick='togglePasswordVisibility(this)'><i class='bi bi-eye'></i></button>
+                  </div></td>";
+            echo "<td><a href='{$row["url"]}' target='_blank' class='btn btn-primary'><i class='bi bi-box-arrow-up-right'></i></a> 
+                  <button type='button' class='btn btn-danger' onclick='deleteRow(this)'><i class='bi bi-trash'></i></button></td>";
+            echo "</tr>";
+          }
+        ?>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function togglePasswordVisibility(button) {
+            var input = button.parentNode.parentNode.querySelector('input');
+            if (input.type === "password") {
+                input.type = "text";
+                button.innerHTML = "<i class='bi bi-eye-slash'></i>";
+            } else {
+                input.type = "password";
+                button.innerHTML = "<i class='bi bi-eye'></i>";
+            }
+        }
+
+        function deleteRow(button) {
+            if (confirm("Are you sure you want to delete this row?")) {
+                var row = button.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+            }
+        }
+    </script>
+</body>
+
+</html>
