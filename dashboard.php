@@ -10,6 +10,9 @@ if(!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
+// else{
+//   header('Location : dashboard.php');
+// }
 
 // Generate session token
 
@@ -56,7 +59,10 @@ header('Expires: 0');
                         <a class="nav-link active" href="#">User</a>
                     </li>
                     <li class="nav-item">
-                        <botton type="submit" class="btn btn-danger" onclick="document.location='welcome.html'"> Logout </botton>
+                      <form action="comm_php/logout.php"  method="POST" >
+                          <button type="submit" class="btn btn-danger"> Logout </button>
+                      </form>
+                       
                     </li>
                 </ul>
         </div>
