@@ -1,12 +1,31 @@
+<?php
+require('comm_php/sec_head.php');
+// Start session
+session_start();
+
+// Unset all session variables
+$_SESSION = array();
+
+// Destroy the session
+session_destroy();
+
+// Disable caching of this page
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Forget Password</title>
+    <title>SecPass - Forget Password</title>
     <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/reset.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="SecPass.png">
 </head>
 
 <body>

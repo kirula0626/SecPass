@@ -51,6 +51,8 @@
                     if($password === $db_password){
                         $_SESSION['user_id'] = $db_id;
                         $_SESSION['username'] = $username;
+                       // $_SESSION['token'] = bin2hex(random_bytes(32)); // Generate session token
+
                         
                         // Password is correct
                         // Check if remember me is checked
@@ -88,13 +90,14 @@
 <html>
 
 <head>
-    <title>Login Page</title>
+    <title>SecPass - Login</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <link rel="icon" type="image/x-icon" href="SecPass.png">
 
 </head>
 
@@ -124,11 +127,11 @@
                                 <?php if(isset($error)) echo $error; ?>
                             </div>
                             <div class="text-center mt-3">
-                                <a href="forgetpass.html" target="_self">Forgot password?</a>
+                                <a href="forgetpass.php" target="_self">Forgot password?</a>
                             </div>
                             <br>
                             <div>
-                                <label class="form-label">Need an account ? <a href="register.html">Signup</a></label>
+                                <label class="form-label">Need an account ? <a href="register.php">Signup</a></label>
                             </div>
                         </form>
                     </div>
