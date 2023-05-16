@@ -45,7 +45,7 @@
                     $db_password = $row['PPassword'];
                     $db_salt = $row['Salt'];
 
-                    $password = hash('sha1',$db_salt.$password);
+                    $password = hash('sha256',$db_salt.$password);
                     echo "<script>console.log('$password')</script>";
                     // Check if password is correct
                     if($password === $db_password){

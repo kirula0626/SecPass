@@ -47,7 +47,7 @@ header('Expires: 0');
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Master Key</a>
+                    <a class="nav-link active" aria-current="page" href="masterpass.php">Master Key</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">My Files</a>
