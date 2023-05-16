@@ -71,6 +71,11 @@ header('Expires: 0');
     <div class="container my-5">
         <h1>Secure Password Manager</h1>
         <p class="lead">This is where you can store and access your Usernames and Passwords!</p>
+
+        <form method="POST" action="masterpass.php">
+        <lable><h3><a href="masterpass.php">Change Master Key</a></h></label>
+        </form>
+        
     </div>
 
     <!-- Bootstrap 5 JS and jQuery -->

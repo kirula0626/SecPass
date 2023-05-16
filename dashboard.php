@@ -10,6 +10,23 @@ if(!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
+
+$stmt = $conn -> prepare("SELECT Mcheck FROM persons WHERE PID = ? ;");
+$stmt -> bind_param("s", $_SESSION['user_id']);
+$stmt -> execute();
+$result = $stmt -> get_result();
+if ($result -> num_rows == 1){
+  $row = $result -> fetch_assoc();
+  $Mcheck = $row['Mcheck'];
+  $stmt->close();
+  if($Mcheck == 0){
+    echo '<script>window.alert("Neet Master Password")</script>';
+   header('Location: masterpass.php');
+    
+  }
+}
+
+
 // else{
 //   header('Location : dashboard.php');
 // }

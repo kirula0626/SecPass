@@ -2,6 +2,10 @@
 require('comm_php/db_con.php');
 require('comm_php/sec_head.php');
 
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 // Start session
 session_start();
 
@@ -10,18 +14,60 @@ if(!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
-// else{
-//   header('Location : dashboard.php');
-// }
 
-// Generate session token
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-//echo $_SESSION['token'] ;
+//get password form html
+$user_id = $_SESSION['user_id'];
 
-// Disable caching of this page
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
+$stmt = $conn -> prepare("SELECT PID FROM persons WHERE PID = ?;");
+$stmt -> bind_param("s", $user_id);
+$stmt -> execute();
+$result = $stmt -> get_result();
+if ($result -> num_rows == 1){
+    $row = $result -> fetch_assoc();
+    $db_id = $row['PID'];
+    $stmt->close();
+
+    $mSalt = bin2hex(random_bytes(32)); 
+
+    $mpassword = hash('sha512',$mSalt.$_POST['password']);
+
+    //stmp for update mSalt
+    $stmt = $conn -> prepare("UPDATE emailsalt SET MSalt = ? WHERE PID = ?;");
+    $stmt -> bind_param("ss", $mSalt, $db_id);
+    $stmt -> execute();
+    $stmt->close();
+    //stmp for update mpassword
+    $stmt = $conn -> prepare("UPDATE persons SET MPassword = ? WHERE PID = ?;");
+    $stmt -> bind_param("ss", $mpassword, $db_id);
+    $stmt -> execute();
+    $stmt->close();
+    //stmp for update mcheck
+    $stmt = $conn -> prepare("UPDATE persons SET Mcheck = 1 WHERE PID = ?;");
+    $stmt -> bind_param("s", $db_id);
+    $stmt -> execute();
+    $stmt->close();
+    
+
+
+}
+
+}
+
+else {
+    header('Location: dashboard.php');
+    exit();
+
+}
+
+
+
+
+
+
+
+
 
 ?>
 
@@ -82,14 +128,14 @@ header('Expires: 0');
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-lg-4 col-md-6 col-sm-8">
+            <div class="col-lg-5 col-md-8 col-sm-8">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title text-center mb-4">Set Master Password</h4>
-                        <form id="masterPasswordForm">
+                        <h4 class="card-title text-center mb-4">Master Password</h4>
+                        <form id="masterPasswordForm" method="POST" action="masterpass.php">
                             <div class="mb-3">
                                 <label for="passwordInput" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="passwordInput" required>
+                                <input type="password" class="form-control" id="passwordInput" name="password" required>
                                 <div class="form-text" id="passwordStrengthMeter"></div>
                                 <ul id="passwordFeedbackList" class="mt-2"></ul>
                             </div>
@@ -99,7 +145,7 @@ header('Expires: 0');
                                 <div id="confirmPasswordFeedback" class="form-text"></div>
                             </div>
                             <div class="d-grid">
-                                <button type="submit" id="confirmButton" class="btn btn-primary" disabled>Confirm</button>
+                                <button type="submit" id="confirmButton" class="btn btn-danger" disabled>Confirm</button>
                             </div>
                         </form>
                     </div>

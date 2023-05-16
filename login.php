@@ -35,7 +35,7 @@
                 $stmt->close();
 
                 //// Get password from database
-                $stmt = $conn -> prepare("SELECT p.PPassword, e.Salt FROM persons p, emailsalt e WHERE p.PID = ? AND e.PID = ?");
+                $stmt = $conn -> prepare("SELECT p.PPassword, e.PSalt FROM persons p, emailsalt e WHERE p.PID = ? AND e.PID = ?");
                 $stmt -> bind_param("ss", $db_id, $db_id);
                 $stmt -> execute();
                 $result = $stmt -> get_result();
@@ -43,7 +43,7 @@
                 if($result -> num_rows == 1 ){
                     $row = $result -> fetch_assoc();
                     $db_password = $row['PPassword'];
-                    $db_salt = $row['Salt'];
+                    $db_salt = $row['PSalt'];
 
                     $password = hash('sha256',$db_salt.$password);
                     echo "<script>console.log('$password')</script>";

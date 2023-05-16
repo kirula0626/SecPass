@@ -49,6 +49,9 @@ session_start();
         $password = "";
         $birthday = $_POST['dob'];
         $telephone = $_POST['country-code']. $_POST['phone'];
+        $mpass = "dewe";
+        $mcheck= 0;
+
 
         //Make salt value 
         $salt = bin2hex(random_bytes(16));
@@ -58,7 +61,7 @@ session_start();
         echo $password;
 
         //Insert values into persons
-        $stmt = $conn -> prepare("INSERT INTO persons VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $conn -> prepare("INSERT INTO persons(PID, PUsername, PEmail,PPassword, PDOB, PPhoneNo) VALUES (?,?,?,?,?,?)");
         $stmt -> bind_param("ssssss", $new_db_id, $username, $email, $password, $birthday, $telephone);
         $stmt -> execute();
         $stmt ->close();
@@ -87,7 +90,7 @@ session_start();
         
         
         //Insert values into emailsalt
-        $stmt = $conn -> prepare("INSERT INTO emailsalt VALUES (?,?,?)");
+        $stmt = $conn -> prepare("INSERT INTO emailsalt (SID, PID, PSalt) VALUES (?,?,?)");
         $stmt -> bind_param("sss", $salt_db_id, $new_db_id, $salt);
         $stmt -> execute();
         $stmt ->close();
