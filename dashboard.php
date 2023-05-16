@@ -57,7 +57,7 @@ header('Expires: 0');
             </div>
             <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="user.php">User</a>
+                        <a class="nav-link active" href="user.php"><?php echo $_SESSION['username']; ?></a>
                     </li>
                     <li class="nav-item">
                       <form action="comm_php/logout.php"  method="POST" >

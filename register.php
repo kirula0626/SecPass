@@ -5,6 +5,9 @@ require('comm_php/db_con.php');
 // Start session
 session_start();
 
+       // Get the current year
+       $currentYear = date('Y');
+
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $stmt = $conn -> prepare("SELECT PID FROM persons ORDER BY PID DESC LIMIT 1");
         $stmt -> execute();
@@ -13,29 +16,32 @@ session_start();
         if($result -> num_rows == 1 ){
             $row = $result -> fetch_assoc();
             $db_id = $row['PID'];
-        }else{
+           
+
+            // Extract the year and index from secP20231
+            $year = substr($db_id , 4, 4);
+            $index = intval(substr($db_id , 8));
+   
+            // If the year is not the current year, update it to the current year
+            if ($year != $currentYear) {
+                $year = $currentYear;
+                $index += 1;
+             } else {
+                $index += 1;
+            }
+   
+               // Combine the components and typecast to a string
+               $new_db_id = 'secP' . $year . strval($index);
+        }
+        
+        elseif ($result->num_rows == 0) {
+            $new_db_id = 'secP' . $currentYear . '1';
+        }
+        else{
             echo '<script>console.log("Check Persons")</script>';
         }
         $stmt ->close();
-        
-         
-        // Get the current year
-        $currentYear = date('Y');
-
-        // Extract the year and index from secP20231
-        $year = substr($db_id , 4, 4);
-        $index = intval(substr($db_id , 8));
-
-        // If the year is not the current year, update it to the current year
-        if ($year != $currentYear) {
-            $year = $currentYear;
-            $index += 1;
-        } else {
-            $index += 1;
-        }
-
-        // Combine the components and typecast to a string
-        $new_db_id = 'secP' . $year . strval($index);
+    
 
         // Get username/email and password from form
         $username = $_POST['username'];
@@ -48,7 +54,7 @@ session_start();
         $salt = bin2hex(random_bytes(16));
 
         //make Hash value password 
-        $password = hash('sha1',$salt.$_POST['password']);
+        $password = hash('sha256',$salt.$_POST['password']);
         echo $password;
 
         //Insert values into persons
@@ -65,18 +71,24 @@ session_start();
         if($result -> num_rows == 1 ){
             $row = $result -> fetch_assoc();
             $salt_db_id = $row['SID'];
-        }else{
-            echo '<script>console.log("Check Salt")</script>';
+
+            $index = intval(substr($salt_db_id,5));
+            $index += 1;
+            $salt_db_id = 'saltP'.strval($index);
+        }
+        elseif ($result -> num_rows == 0){
+            $salt_db_id = 'saltP1';
+        }
+        else{
+            echo '<script>console.log("Check Emailsalt")</script>';
         }
         $stmt ->close();
 
-        $index = intval(substr($salt_db_id,5));
-        $index += 1;
-        $Salt_db_id = 'salt'.strval($index);
+        
         
         //Insert values into emailsalt
         $stmt = $conn -> prepare("INSERT INTO emailsalt VALUES (?,?,?)");
-        $stmt -> bind_param("sss", $Salt_db_id, $new_db_id, $salt);
+        $stmt -> bind_param("sss", $salt_db_id, $new_db_id, $salt);
         $stmt -> execute();
         $stmt ->close();
 
