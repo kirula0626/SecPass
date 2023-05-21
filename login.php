@@ -124,6 +124,7 @@
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Submit</button>
+                                <br>
                                 <?php if(isset($error)) echo $error; ?>
                             </div>
                             <div class="text-center mt-3">

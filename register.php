@@ -49,16 +49,13 @@ session_start();
         $password = "";
         $birthday = $_POST['dob'];
         $telephone = $_POST['country-code']. $_POST['phone'];
-        $mpass = "dewe";
-        $mcheck= 0;
 
-
-        //Make salt value 
+        //Make salt value of Register Password
         $salt = bin2hex(random_bytes(16));
 
         //make Hash value password 
         $password = hash('sha256',$salt.$_POST['password']);
-        echo $password;
+        echo "<script>console.log('$password')</script>";
 
         //Insert values into persons
         $stmt = $conn -> prepare("INSERT INTO persons(PID, PUsername, PEmail,PPassword, PDOB, PPhoneNo) VALUES (?,?,?,?,?,?)");

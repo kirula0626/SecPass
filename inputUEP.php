@@ -1,3 +1,87 @@
+<?php
+require('comm_php/sec_head.php');
+require('comm_php/db_con.php');
+
+// Start session
+session_start();
+
+$user_id = $_SESSION['user_id'];
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+  //get input values
+  $websiteUrl = $_POST['websiteUrlInput'];
+  // Remove the "http://" or "https://" prefix
+  $url = preg_replace('#^https?://#', '', $websiteUrl);
+  // Extract the host name
+  $host = parse_url($url, PHP_URL_HOST);
+  // Extract the domain name
+  $domain = preg_replace('/^www\./', '', $host);
+
+  $email = $_POST['emailInput'];
+  $password = $_POST['passwordInput'];
+  $masterPassword = $_POST['masterPasswordInput'];
+
+  //check if master password is correct
+  $stmt = $conn -> prepare("SELECT p.Mpassword,e.MSalt,e.EPIV FROM persons p,emailsalt e WHERE p.PID = ? AND e.PID = ?;");
+  $stmt -> bind_param("ss", $user_id);
+  $stmt -> execute();
+  $result = $stmt -> get_result();
+  if ($result -> num_rows == 1){
+    $row = $result -> fetch_assoc();
+    $masterpass = $ROW['Mpassword'];
+    $masterSalt = $ROW['MSalt'];
+    $iVector = $ROW['EPIV'];
+    $stmt->close();
+
+    $inputMasterPassword = hash('sha512',$masterSalt.$masterPassword); // Input MasterPassword --> Hash MasterPassword
+
+    //check input password is correct
+    if($inputMasterPassword === $masterpass){
+        //Get EPID last for table 
+        $stmt = $conn -> prepare("SELECT EPID FROM emailpass ORDER BY EPID DESC LIMIT 1");
+        $stmt -> execute();
+        $result = $stmt -> get_result();
+        if($result -> num_rows == 1 ){
+            $row = $result -> fetch_assoc();
+            $epid = $row['EPID'];
+            $stmt->close();
+            // Extract the year and index from EP20231  
+            $year = substr($epid , 2, 4);
+            $index = intval(substr($epid , 6));
+            // If the year is not the current year, update it to the current year
+            if ($year != $currentYear) {
+                $year = $currentYear;
+                $index += 1;
+            } else {
+                $index += 1;
+            }
+            // Combine the components and typecast to a string
+            $epid = 'EP' . $year . strval($index);
+
+        } elseif($result -> num_rows == 0){
+            $epid = 'EP'. $currentYear.'1';
+        } else{
+            echo "<script>console.log('Check Email Pass ID')</script>";
+        }
+        $stmt ->close();
+        //Password Encrypt AES
+        
+        //Insert values to emailpass table
+        $stmt = $conn -> prepare("INSERT INTO emailpass (EPID, PID, SITE, URL,Email,Password) VALUES (?,?,?,?,?,?);");
+        $stmt -> bind_param("ssssss",$epid, $user_id, $domain, $websiteUrl, $email, $password);
+      
+        }
+  }
+  else{
+      echo "<script>window.alert('Master Password is incorrect')</script>";
+      header('Location: dashboard.php');
+  }
+}
+
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,12 +110,12 @@
         <h3>Website Login</h3>
       </div>
     </div>
-    <form id="loginForm" onsubmit="inputUEP.php">
+    <form id="loginForm" method="POST" action="inputUEP.php" >
       <div class="row justify-content-center">
         <div class="col-6">
           <div class="mb-3">
             <label for="websiteUrlInput" class="form-label">Website URL:</label>
-            <input type="text" class="form-control" id="websiteUrlInput" required>
+            <input type="url" class="form-control" id="websiteUrlInput" placeholder="www.google.com" required>
           </div>
         </div>
       </div>
@@ -39,7 +123,7 @@
         <div class="col-6">
           <div class="mb-3">
             <label for="emailInput" class="form-label">Username or Email:</label>
-            <input type="email" class="form-control" id="emailInput" required>
+            <input type="text" class="form-control" id="emailInput" required>
           </div>
         </div>
       </div>
@@ -51,7 +135,7 @@
           </div>
         </div>
       </div>
-      <div class="row justify-content-center hidden" id="masterPasswordRow">
+      <div class="row justify-content-center" id="masterPasswordRow">
       <div class="col-6">
         <div class="mb-3">
           <label for="masterPasswordInput" class="form-label">Master Password:</label>
@@ -68,23 +152,7 @@
   </div>
 
   <script>
-    var form = document.getElementById('loginForm');
-    var masterPasswordRow = document.getElementById('masterPasswordRow');
-    var submitButton = document.getElementById('submitButton');
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      // Lock form fields
-      document.getElementById('websiteUrlInput').setAttribute('readonly', 'true');
-      document.getElementById('emailInput').setAttribute('readonly', 'true');
-      document.getElementById('passwordInput').setAttribute('readonly', 'true');
-
-      // Show master password input
-      masterPasswordRow.classList.remove('hidden');
-      submitButton.innerText = 'Confirm';
-    });
-
+ 
     document.getElementById('websiteUrlInput').addEventListener('input', function() {
       var url = this.value;
       var apiUrl = 'https://logo.clearbit.com/' + url;

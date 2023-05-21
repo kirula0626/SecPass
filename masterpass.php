@@ -30,27 +30,20 @@ if ($result -> num_rows == 1){
     $stmt->close();
 
     $mSalt = bin2hex(random_bytes(32)); 
+    $ePIV = bin2hex(random_bytes(64)); 
 
     $mpassword = hash('sha512',$mSalt.$_POST['password']);
 
     //stmp for update mSalt
-    $stmt = $conn -> prepare("UPDATE emailsalt SET MSalt = ? WHERE PID = ?;");
-    $stmt -> bind_param("ss", $mSalt, $db_id);
+    $stmt = $conn -> prepare("UPDATE emailsalt SET MSalt = ?, EPIV = ? WHERE PID = ?;");
+    $stmt -> bind_param("sss", $mSalt,$PIVe, $db_id);
     $stmt -> execute();
     $stmt->close();
     //stmp for update mpassword
-    $stmt = $conn -> prepare("UPDATE persons SET MPassword = ? WHERE PID = ?;");
+    $stmt = $conn -> prepare("UPDATE persons SET MPassword = ?, Mcheck = 1 WHERE PID = ?;");
     $stmt -> bind_param("ss", $mpassword, $db_id);
     $stmt -> execute();
     $stmt->close();
-    //stmp for update mcheck
-    $stmt = $conn -> prepare("UPDATE persons SET Mcheck = 1 WHERE PID = ?;");
-    $stmt -> bind_param("s", $db_id);
-    $stmt -> execute();
-    $stmt->close();
-    
-
-
 }
 
 }
