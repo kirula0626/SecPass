@@ -1,6 +1,35 @@
 <?php
 $url = "www.boc.lk"; // the URL to get the logo for
 echo json_encode(array("url" => $url)); // send the URL to the frontend as JSON
+
+require("../comm_php/db_con.php");
+
+// Start session
+session_start();
+//Session ID
+$user_id = $_SESSION['user_id'];
+
+$stmt = $conn->prepare("SELECT p.Mpassword, e.MSalt, e.EPIV FROM persons p, emailsalt e WHERE p.PID = ? AND e.PID = ?");
+$stmt->bind_param("ss", $user_id, $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 1) {
+    $row = $result->fetch_assoc();
+    $masterpass = $row['Mpassword'];
+    $masterSalt = $row['MSalt'];
+    $iVector = bin2hex(random_bytes(8));
+    $iVectorLength = strlen($iVector); // Get the byte length of $iVector
+
+    $stmt->close();
+    echo $iVector;
+    echo "\nBytes of is :  ".$iVectorLength."bytes";
+    // Rest of your code...
+}
+
+
+
+
 ?>
 
 <!DOCTYPE html>

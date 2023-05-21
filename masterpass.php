@@ -8,7 +8,7 @@ header('Expires: 0');
 
 // Start session
 session_start();
-
+echo '<script>window.alert("Neet Master Password")</script>';
 // Check if user is not logged in
 if(!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -30,13 +30,13 @@ if ($result -> num_rows == 1){
     $stmt->close();
 
     $mSalt = bin2hex(random_bytes(32)); 
-    $ePIV = bin2hex(random_bytes(64)); 
+    $ePIV = bin2hex(random_bytes(8)); 
 
     $mpassword = hash('sha512',$mSalt.$_POST['password']);
 
     //stmp for update mSalt
     $stmt = $conn -> prepare("UPDATE emailsalt SET MSalt = ?, EPIV = ? WHERE PID = ?;");
-    $stmt -> bind_param("sss", $mSalt,$PIVe, $db_id);
+    $stmt -> bind_param("sss", $mSalt,$ePIV, $db_id);
     $stmt -> execute();
     $stmt->close();
     //stmp for update mpassword
@@ -49,17 +49,10 @@ if ($result -> num_rows == 1){
 }
 
 else {
-    header('Location: dashboard.php');
-    exit();
+    //header('Location: dashboard.php');
+    //exit();
 
 }
-
-
-
-
-
-
-
 
 
 ?>

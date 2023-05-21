@@ -1,7 +1,9 @@
 <?php
 require('comm_php/sec_head.php');
 require('comm_php/db_con.php');
+require('comm_php/encryp_decryp.php');
 
+$currentYear = date('Y');
 // Start session
 session_start();
 
@@ -9,30 +11,34 @@ $user_id = $_SESSION['user_id'];
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
   //get input values
   $websiteUrl = $_POST['websiteUrlInput'];
-  // Remove the "http://" or "https://" prefix
-  $url = preg_replace('#^https?://#', '', $websiteUrl);
-  // Extract the host name
-  $host = parse_url($url, PHP_URL_HOST);
-  // Extract the domain name
-  $domain = preg_replace('/^www\./', '', $host);
+ // Extract the host
+  $host = parse_url($websiteUrl, PHP_URL_HOST);
+  // Split the host on '.' to get the parts
+  $parts = explode('.', $host);
+  // If the host begins with 'www', remove it
+  if ($parts[0] == 'www') {
+    array_shift($parts);
+  }
+  // Join the remaining parts back together
+  $domain = implode('.', $parts);
 
   $email = $_POST['emailInput'];
   $password = $_POST['passwordInput'];
-  $masterPassword = $_POST['masterPasswordInput'];
+ // $masterPassword = $_POST['masterPasswordInput'];
 
   //check if master password is correct
   $stmt = $conn -> prepare("SELECT p.Mpassword,e.MSalt,e.EPIV FROM persons p,emailsalt e WHERE p.PID = ? AND e.PID = ?;");
-  $stmt -> bind_param("ss", $user_id);
+  $stmt -> bind_param("ss", $user_id,$user_id);
   $stmt -> execute();
   $result = $stmt -> get_result();
   if ($result -> num_rows == 1){
     $row = $result -> fetch_assoc();
-    $masterpass = $ROW['Mpassword'];
-    $masterSalt = $ROW['MSalt'];
-    $iVector = $ROW['EPIV'];
+    $masterpass = $row['Mpassword'];
+    $masterSalt = $row['MSalt'];
+    $iVector = $row['EPIV'];
     $stmt->close();
 
-    $inputMasterPassword = hash('sha512',$masterSalt.$masterPassword); // Input MasterPassword --> Hash MasterPassword
+    $inputMasterPassword = hash('sha512',$masterSalt.$_POST['masterPasswordInput']); // Input MasterPassword --> Hash MasterPassword
 
     //check input password is correct
     if($inputMasterPassword === $masterpass){
@@ -58,22 +64,25 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $epid = 'EP' . $year . strval($index);
 
         } elseif($result -> num_rows == 0){
+            
             $epid = 'EP'. $currentYear.'1';
         } else{
             echo "<script>console.log('Check Email Pass ID')</script>";
         }
-        $stmt ->close();
         //Password Encrypt AES
-        
+        $encrptPass =  encryptData($password,$masterpass,$iVector);
         //Insert values to emailpass table
         $stmt = $conn -> prepare("INSERT INTO emailpass (EPID, PID, SITE, URL,Email,Password) VALUES (?,?,?,?,?,?);");
-        $stmt -> bind_param("ssssss",$epid, $user_id, $domain, $websiteUrl, $email, $password);
+        $stmt -> bind_param("ssssss",$epid, $user_id, $domain, $websiteUrl, $email, $encrptPass);
+        $stmt -> execute();
+        $stmt->close();
+        echo '<script>window.alert("Recorde Instered Sucessfull")</script>';
       
         }
   }
   else{
-      echo "<script>window.alert('Master Password is incorrect')</script>";
-      header('Location: dashboard.php');
+      //echo "<script>window.alert('Master Password is incorrect')</script>";
+     // header('Location: dashboard.php');
   }
 }
 
@@ -115,7 +124,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         <div class="col-6">
           <div class="mb-3">
             <label for="websiteUrlInput" class="form-label">Website URL:</label>
-            <input type="url" class="form-control" id="websiteUrlInput" placeholder="www.google.com" required>
+            <input type="url" class="form-control" id="websiteUrlInput" name="websiteUrlInput" placeholder="https://www.google.com" required>
           </div>
         </div>
       </div>
@@ -123,7 +132,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         <div class="col-6">
           <div class="mb-3">
             <label for="emailInput" class="form-label">Username or Email:</label>
-            <input type="text" class="form-control" id="emailInput" required>
+            <input type="text" class="form-control" id="emailInput" name="emailInput" required>
           </div>
         </div>
       </div>
@@ -131,7 +140,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         <div class="col-6">
           <div class="mb-3">
             <label for="passwordInput" class="form-label">Password:</label>
-            <input type="password" class="form-control" id="passwordInput" required>
+            <input type="password" class="form-control" id="passwordInput" name="passwordInput" required>
           </div>
         </div>
       </div>
@@ -139,7 +148,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
       <div class="col-6">
         <div class="mb-3">
           <label for="masterPasswordInput" class="form-label">Master Password:</label>
-          <input type="password" class="form-control" id="masterPasswordInput" required>
+          <input type="password" class="form-control" id="masterPasswordInput" name="masterPasswordInput" required>
         </div>
       </div>
     </div>
