@@ -19,7 +19,7 @@
             // Get username/email and password from form
             $username = $_POST['username'];
             $password = $_POST['password'];
-            echo "<script>console.log('$username')</script>";
+            
             // Check if username or email exists in database
             $stmt = $conn -> prepare("SELECT PID FROM persons p WHERE PUsername = ? OR PEmail = ?");
             $stmt -> bind_param("ss", $username, $username);
@@ -31,7 +31,7 @@
                 
                 $row = $result -> fetch_assoc();
                 $db_id = $row['PID'];
-                echo "<script>console.log('$db_id')</script>";
+                
                 $stmt->close();
 
                 //// Get password from database
@@ -46,7 +46,6 @@
                     $db_salt = $row['PSalt'];
 
                     $password = hash('sha256',$db_salt.$password);
-                    echo "<script>console.log('$password')</script>";
                     // Check if password is correct
                     if($password === $db_password){
                         $_SESSION['user_id'] = $db_id;

@@ -55,7 +55,6 @@ session_start();
 
         //make Hash value password 
         $password = hash('sha256',$salt.$_POST['password']);
-        echo "<script>console.log('$password')</script>";
 
         //Insert values into persons
         $stmt = $conn -> prepare("INSERT INTO persons(PID, PUsername, PEmail,PPassword, PDOB, PPhoneNo) VALUES (?,?,?,?,?,?)");
