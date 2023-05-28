@@ -10,6 +10,7 @@ session_start();
 $user_id = $_SESSION['user_id'];
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
   //get input values
+
   $websiteUrl = $_POST['websiteUrlInput'];
  // Extract the host
   $host = parse_url($websiteUrl, PHP_URL_HOST);
@@ -81,7 +82,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         }
   }
   else{
-      //echo "<script>window.alert('Master Password is incorrect')</script>";
+      echo "<script>window.alert('Master Password is incorrect')</script>";
      // header('Location: dashboard.php');
   }
 }
